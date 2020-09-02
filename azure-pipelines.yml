@@ -17,7 +17,7 @@ steps:
     script: |
       Install-Module Pester -Force
       Import-Module Pester -Force
-      $result = Invoke-Pester -CodeCoverage ./gitlab.psm1 -Show None -PassThru
+      $result = Invoke-Pester -CodeCoverage ./concourse.psm1 -Show None -PassThru
       if($result.FailedCount -gt 0) {
         $result.TestResult | Where-Object {$_.Result -ne "Passed"}
         Exit 1
@@ -54,4 +54,4 @@ steps:
 - task: PublishPipelineArtifact@1
   inputs:
     targetPath: '$(Pipeline.Workspace)'
-    artifact: 'gitlab-artifacts'
+    artifact: 'concourse-artifacts'
