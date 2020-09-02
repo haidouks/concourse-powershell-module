@@ -28,7 +28,7 @@ steps:
       write-output "`n`n----------------Missed Commands----------------`n"
       write-output $result.CodeCoverage.MissedCommands
       write-output "`n----------------Missed Commands----------------`n`n`n"
-      $coverage = $result.CodeCoverage.NumberOfCommandsAnalyzed -ne 0 ? $(100*$($result.CodeCoverage.NumberOfCommandsExecuted)/$($result.CodeCoverage.NumberOfCommandsAnalyzed)) : 0
+      $coverage = $result.CodeCoverage.NumberOfCommandsAnalyzed ? $(100*$($result.CodeCoverage.NumberOfCommandsExecuted)/$($result.CodeCoverage.NumberOfCommandsAnalyzed)) : 0
       write-host "Code coverage :  % $coverage"
       if($coverage -lt 0) {
           Write-Host "Code coverage should be minimum %0"
