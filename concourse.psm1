@@ -23,6 +23,7 @@ function Invoke-ConcourseAuth {
     )
     try {
         $linkToLogin = "/sky/issuer/auth/$loginType"
+        $VerbosePreference = "Continue"
         $req = Invoke-WebRequest -Uri "$concourseUrl/sky/login" -Method Get -SessionVariable ciCookie -SkipCertificateCheck
         $newUri = $req.Links.href | Where-Object {$_ -match $linkToLogin}
         $null = Invoke-RestMethod -Uri "$concourseUrl$newUri" -WebSession $ciCookie -Method Post -FollowRelLink -Body @{login=$user;password=$pass} -SkipCertificateCheck
