@@ -24,11 +24,13 @@ function Invoke-ConcourseAuth {
     try {
         $linkToLogin = "/sky/issuer/auth/$loginType"
         $VerbosePreference = "Continue"
+        Write-Verbose -Message "Creating new request to $concourseUrl/sky/login" 
         $req = Invoke-WebRequest -Uri "$concourseUrl/sky/login" -Method Get -SessionVariable ciCookie -SkipCertificateCheck
-        Write-Verbose -Message "Received response from $concourseUrl/sky/login : $($req | Out-String)"
+        Write-Verbose -Message "Received response : $($req | Out-String)"
+        Write-Verbose -Message "Received content : $($req.Content | Out-String)"
         Write-Verbose -Message "Filtering url to login for auth type $loginType : $($req.Links.href | Out-String)"
         $newUri = $req.Links.href | Where-Object {$_ -match $linkToLogin}
-        Write-Verbose -Message "Creating new request to $concourseUrl$newUri" 
+        
         $null = Invoke-RestMethod -Uri "$concourseUrl$newUri" -WebSession $ciCookie -Method Post -FollowRelLink -Body @{login=$user;password=$pass} -SkipCertificateCheck
         $cookies = $ciCookie.Cookies.GetCookies($concourseUrl)
         Write-Verbose -Message "Recevied cookie from Concourse: $($cookie | Out-String)"
