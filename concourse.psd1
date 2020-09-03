@@ -12,7 +12,7 @@
 RootModule = 'concourse.psm1'
 
 # Version number of this module.
-ModuleVersion = '3.0.0'
+ModuleVersion = '3.1.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -24,10 +24,10 @@ GUID = '557e08dc-3afe-4bb5-8369-390df8d49477'
 Author = 'Cansin Aldanmaz'
 
 # Company or vendor of this module
-CompanyName = 'DevOps'
+CompanyName = 'CnSn'
 
 # Copyright statement for this module
-Copyright = '(c) DevOps. All rights reserved.'
+Copyright = '(c) CnSn. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'Powershell Concourse Module'
@@ -107,7 +107,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'Fly-free functions added'
+        ReleaseNotes = 'Remove fly depended functions'
 
     } # End of PSData hashtable
 

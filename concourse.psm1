@@ -1,6 +1,5 @@
 # Implement your module commands in this script.
-$Script:flyPath = ""
-$Script:alias = ""
+
 function Invoke-ConcourseAuth {
     [OutputType([System.Collections.ArrayList])]
     param (
@@ -261,7 +260,7 @@ function Get-ConcoursePipeline {
     #>
 
 }
-function Build-ConcourseJob {
+function Invoke-ConcourseJob {
     [OutputType([System.Collections.Hashtable])]
     param (
         # Name of the pipeline
@@ -367,7 +366,7 @@ function Build-ConcourseJob {
     #>
 
 }
-function Get-ConcourseJob {
+function Get-ConcourseJobStatus {
     [OutputType([System.Collections.Hashtable])]
     param (
         # ID of the build
@@ -454,12 +453,12 @@ function Get-ConcourseJob {
         None.
 
         .OUTPUTS
-        System.Collections.Hashtable.  Get-ConcourseJob returns the details of given job and build number.
+        System.Collections.Hashtable. Get-ConcourseJobStatus returns the details of given job and build number.
 
 
         .EXAMPLE
         PS> $auth = Invoke-ConcourseAuth -user "myUser" -pass "myPass" -concourseUrl "http://myConcourseUrl.com" -loginType "local"
-        PS> Get-ConcourseJob -job "set-params-uat" -pipeline "myPipeline" -team "myTeam" -ciCookie $auth -concourseUrl "http://myConcourseUrl.com"
+        PS> Get-ConcourseJobStatus -job "set-params-uat" -pipeline "myPipeline" -team "myTeam" -ciCookie $auth -concourseUrl "http://myConcourseUrl.com"
 
         id                    : 7922
         name                  : set-params-uat
@@ -472,7 +471,7 @@ function Get-ConcourseJob {
         groups                :
 
         .EXAMPLE
-        PS> Get-ConcourseJob -job "set-params-uat" -pipeline "myPipeline" -team "myTeam" -ciCookie $auth -concourseUrl "http://myConcourseUrl.com" -buildID 34
+        PS> Get-ConcourseJobStatus -job "set-params-uat" -pipeline "myPipeline" -team "myTeam" -ciCookie $auth -concourseUrl "http://myConcourseUrl.com" -buildID 34
 
         id            : 1366571
         team_name     : myTeam
@@ -488,389 +487,6 @@ function Get-ConcourseJob {
 
 }
 
-function Get-ConcourseModuleParams {
-    [CmdletBinding()]
-    param (
-    )
-    begin {
-    }
-    process {
-        Get-Variable -Scope Script
-    }
-    end {
-    }
-}
-function Set-FlyPath {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [String]$path
-    )
-    begin {
-    }
-    process {
-        $Script:flyPath = $path
-    }
-    end {
-    }
-}
-function Get-FlyCLI {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true,
-            HelpMessage = "Download Path for Fly")]
-        [ValidateNotNullOrEmpty()]
-        [string]
-        $path,
-        [Parameter(Mandatory = $true,
-            HelpMessage = "URL of FLY Executable")]
-        [String]
-        $url
-    )
-    begin {
-    }
-    process {
-        Write-Verbose -Message "Downloading FLY from $Url to $Path"
-        $progressPreference = 'silentlyContinue'
-        try {
-            Invoke-WebRequest -Uri $Url -OutFile $Path -ErrorVariable errorDetails -NoProxy
-            Set-FlyPath -Path $path
-            if ($IsLinux) {
-                chmod +x $path
-            }
-        }
-        catch {
-            $errorMessage = "$($_.Exception.Message)`n$(($_ | Select-Object -ExpandProperty invocationinfo).PositionMessage)`nerrorDetails:`n$errorDetails"
-            throw "Catched an exception in Function:$($MyInvocation.MyCommand)`n$errorMessage"
-        }
-    }
-    end {
-    }
-}
-function Register-Concourse {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNull()]
-        [String]
-        $concourseUrl,
-        [Parameter(Mandatory = $true)]
-        [System.Management.Automation.Credential()]
-        [System.Management.Automation.PSCredential]$cred,
-        [String]
-        $team = "main",
-        [String]
-        $alias = "devops"
-    )
-    begin {
-        $Script:alias = $alias
-        Write-Verbose -Message "Setting fly path $Script:flyPath"
-        Set-Alias -Name Invoke-Fly -Value $Script:flyPath
-        $userName = $cred.UserName
-        $password = $cred.GetNetworkCredential().password
-    }
-    process {
-        try {
-            $login = Invoke-Fly -t $Script:alias login -c $concourseUrl -k -u $username -p $password -n $team 2>&1
-            if (($login | out-string) -match "target saved") {
-                Write-Verbose -Message "Login is successfull"
-            }
-            else {
-                $errorMessage = "$($login | out-string)`n$(($_ | Select-Object -ExpandProperty invocationinfo).PositionMessage)"
-                throw $errorMessage
-            }
-        }
-        catch {
-            $errorMessage = "$($_.Exception.Message)`n$(($_ | Select-Object -ExpandProperty invocationinfo).PositionMessage)"
-            throw "Catched an exception in Function:$($MyInvocation.MyCommand)`n$errorMessage"
-        }
-    }
-    end {
-    }
-}
-function Invoke-ConcourseJob {
-    [CmdletBinding()]
-    param (
-        # Pipeline name
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string]
-        $pipeline,
-        # Pipeline's job name
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string]
-        $job,
-        [switch]
-        $watch
-    )
-    begin {
-        Set-Alias -Name Invoke-Fly -Value $Script:flyPath
-    }
-    process {
-        if ($watch) {
-            return Invoke-Fly -t $Script:alias trigger-job -j $pipeline/$job -w 2>&1
-        }
-        else {
-            $result = Invoke-Fly -t $Script:alias trigger-job -j $pipeline/$job 2>&1
-            if ($?) {
-                return @{
-                    State    = $result.Split(" ")[0]
-                    Job      = $job
-                    Pipeline = $pipeline
-                    Id       = $result.Split(" ")[2]
-                }
-            }
-            else {
-                $errorMessage = "$($result | out-string)`n$(($_ | Select-Object -ExpandProperty invocationinfo).PositionMessage)"
-                throw "Catched an exception in Function:$($MyInvocation.MyCommand)`n$errorMessage"
-            }
-        }
-    }
-    end {
-    }
-}
-function Test-ConcourseLoginStatus {
-    [CmdletBinding()]
-    param (    )
-    begin {
-        Set-Alias -Name Invoke-Fly -Value $Script:flyPath
-    }
-    process {
-        $result = Invoke-Fly -t $Script:alias status 2>&1
-        if ($result -match "logged in") {
-            return $true
-        }
-        else {
-            return $false
-        }
-    }
-    end {
-    }
-}
-function Get-ConcourseJobLog {
-    [CmdletBinding()]
-    param (
-        # Pipeline name
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string]
-        $pipeline,
-        # Pipeline's job name
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string]
-        $job,
-        # Job's build id
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [int]
-        $build
-    )
-    begin {
-        Set-Alias -Name Invoke-Fly -Value $Script:flyPath
-    }
-    process {
-        $result = Invoke-Fly -t $Script:alias watch -j $pipeline/$job -b $build -t 2>&1
-        Write-Verbose -Message "Received: $result"
-        if (-not $? -or ($result | Out-String) -match "^(error:) *") {
-            $errorMessage = "$($result | out-string)`n$(($_ | Select-Object -ExpandProperty invocationinfo).PositionMessage)"
-            throw "Catched an exception in Function:$($MyInvocation.MyCommand)`n$errorMessage"
-        }
-        return $result
-    }
-    end {
-    }
-}
-function Get-ConcourseBuilds {
-    [CmdletBinding()]
-    param (
-        # Parameter help description
-        [Parameter(Mandatory = $false)]
-        $query,
-        # Parameter help description
-        [Parameter(Mandatory = $false)]
-        [int]
-        $since = 30,
-        # Parameter help description
-        [Parameter(Mandatory = $false)]
-        [int]
-        $count = 1000
-    )
-    begin {
-        Set-Alias -Name Invoke-Fly -Value $Script:flyPath
-        $date = (Get-Date).AddMinutes(-$since).ToString("yyyy-MM-dd HH:mm:ss")
-        $builds = Invoke-Fly -t $Script:alias builds --since $date -c $count --json 2>&1
-        if (-not $?) {
-            $errorMessage = "$($builds | out-string)`n$(($_ | Select-Object -ExpandProperty invocationinfo).PositionMessage)"
-            throw $errorMessage
-        }
-    }
-    process {
-        Write-Verbose "hash: $($query | ConvertTo-Json)"
-        $builds = $builds | ConvertFrom-Json
-        foreach ($key in $query.Keys) {
-            Write-Verbose "filtering for key : $key and value : $query['$key']"
-            $builds = $builds | Where-Object { $_."$key" -eq $query["$key"] }
-        }
-        return $builds | ConvertTo-Json -Compress
-    }
-    end {
-    }
-}
-function Get-ConcourseWorkers {
-    [CmdletBinding()]
-    param ()
-    begin {
-        Set-Alias -Name Invoke-Fly -Value $Script:flyPath
-        $workers = Invoke-Fly -t $Script:alias workers --json 2>&1
-        if (-not $?) {
-            $errorMessage = "$($workers | out-string)`n$(($_ | Select-Object -ExpandProperty invocationinfo).PositionMessage)"
-            throw $errorMessage
-        }
-    }
-    process {
-        return $workers
-    }
-    end {
-    }
-}
-function Get-PrunedWorkers {
-    [CmdletBinding()]
-    param ()
-    begin {
-        Set-Alias -Name Invoke-Fly -Value $Script:flyPath
-        $workers = Get-ConcourseWorkers
-    }
-    process {
-        $workers = $workers | ConvertFrom-Json
-        $stalledWorkers = $workers | Where-Object { $_.state -eq "stalled" }
-        $result = "No stalled workers found to prune."
-        if ($stalledWorkers.count -gt 0) {
-            Invoke-Fly -t $Script:alias prune-worker --all-stalled
-            $result = "Deleted  $($stalledWorkers.name) Workers"
-        }
-        return $result
-    }
-    end {
-    }
-}
-function Set-ConcourseTeamAuth {
-    [CmdletBinding()]
-    param (
-        # Teamname
-        [Parameter(mandatory = $True)]
-        [string]
-        $team,
-        # Team auth filepath
-        [Parameter(Mandatory = $True)]
-        [string]
-        $filepath
-    )
-    begin {
-       Set-Alias -Name Invoke-Fly -Value $Script:flyPath
-    }
-    process {
-        try {
-            if (-not (test-path -Path $filepath)) {
-                Throw "Unable to find yml: $filepath"
-            }
-            Invoke-Fly -t $Script:alias set-team -n $team -c $filepath --non-interactive
-        }
-        catch {
-            $exception = $PSItem | Select-Object * | Format-Custom -Depth 1 | Out-String
-            Write-Error -Message $exception -ErrorAction Stop
-        }
-    }
-    end {
-    }
-}
-
-function Get-ConcourseJobStatus {
-    [CmdletBinding()]
-    param (
-        # Pipeline name
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string]
-        $pipeline,
-        # Pipeline's job name
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string]
-        $job,
-        # Job's build id
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [int]
-        $build,
-        [int]
-        $last = 100
-
-    )
-
-    begin {
-        Set-Alias -Name Invoke-Fly -Value $Script:flyPath
-    }
-
-    process {
-        $jobStatus = Invoke-Fly -t $Script:alias builds -a -c $last -j $pipeline/$job --json 2>&1
-        if ($?) {
-            return $($jobStatus | ConvertFrom-Json) | Where-Object { $_.name -eq $build }
-        }
-        else {
-            $errorMessage = "$($jobStatus | out-string)`n$(($_ | Select-Object -ExpandProperty invocationinfo).PositionMessage)"
-            throw "Catched an exception in Function:$($MyInvocation.MyCommand)`n$errorMessage"
-        }
-    }
-
-    end {
-    }
-}
-
-function Get-ConcoursePipelines {
-    [CmdletBinding()]
-    param (
-        # Name of the pipeline
-        [Parameter(Mandatory=$false)]
-        [string]
-        [ValidateNotNullOrEmpty()]
-        $pipelineName,
-        # Name of the team
-        [Parameter(Mandatory=$false)]
-        [string]
-        [ValidateNotNullOrEmpty()]
-        $team
-    )
-
-    begin {
-        Set-Alias -Name Invoke-Fly -Value $Script:flyPath
-    }
-
-    process {
-        $pipelines = $null
-        try {
-            $pipelines = Invoke-Fly -t $Script:alias curl -- /api/v1/pipelines | ConvertFrom-Json
-            if(-not [string]::IsNullOrEmpty($pipelineName)) {
-                $pipelines = $pipelines | Where-Object {$_.name -eq $pipelineName}
-            }
-            if(-not [string]::IsNullOrEmpty($team)) {
-                $pipelines = $pipelines | Where-Object {$_.team_name -eq $team}
-            }
-        }
-        catch {
-            $exception = $PSItem | Select-Object * | Format-Custom -Depth 1 | Out-String
-            Write-Error -Message $exception -ErrorAction Stop
-        }
-
-        return $($pipelines | ConvertTo-Json -Compress)
-    }
-
-    end {
-
-    }
-}
 
 
 # Export only the functions using PowerShell standard verb-noun naming.
