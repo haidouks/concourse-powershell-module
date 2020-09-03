@@ -7,6 +7,7 @@ $testPipeline = "***"
 $testJob = "***"
 $testbuildID = "***"
 $testTeam = "***"
+$VerbosePreference = "Continue"
 
 $ModuleManifestName = 'concourse.psd1'
 $ModuleManifestPath = "$PSScriptRoot\..\$ModuleManifestName"

@@ -27,6 +27,7 @@ function Invoke-ConcourseAuth {
         $newUri = $req.Links.href | Where-Object {$_ -match $linkToLogin}
         $null = Invoke-RestMethod -Uri "$concourseUrl$newUri" -WebSession $ciCookie -Method Post -FollowRelLink -Body @{login=$user;password=$pass} -SkipCertificateCheck
         $cookies = $ciCookie.Cookies.GetCookies($concourseUrl)
+        Write-Verbose -Message "Recevied cookie from Concourse: $($cookie | Out-String)"
         $cookies["skymarshal_auth0"] ? $(return $cookies) : $(Throw "Unable to authenticate to $concourseUrl with user $user and login type $loginType")
     }
     catch {
