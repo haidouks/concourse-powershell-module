@@ -22,6 +22,7 @@ Describe 'Module Manifest Tests' {
 Import-Module $ModuleManifestPath -Force
 
 Describe "Invoke-ConcourseAuth" {
+    $VerbosePreference = "Continue"
     Context "If Auth type is local and credentials are valid" {
         It "It should return skymarshal_auth0" {
             $auth = Invoke-ConcourseAuth -user $userName -pass $pass -concourseUrl $concourseUrl -loginType local
