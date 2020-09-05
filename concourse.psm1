@@ -31,7 +31,11 @@ function Invoke-ConcourseAuth {
         Write-Verbose -Message "Filtering url to login for auth type $loginType : $($req.Links.href | Out-String)"
         $newUri = ($req.Content |  Select-String -Pattern  "$linkToLogin\?req\=\w*").Matches.Value
         Write-Verbose -Message "Creating new request to $concourseUrl$newUri" 
-        $null = Invoke-RestMethod -Uri "$concourseUrl$newUri" -WebSession $ciCookie -Method Post -FollowRelLink -Body @{login=$user;password=$pass} -SkipCertificateCheck
+        $req = Invoke-WebRequest -Uri "$concourseUrl$newUri" -WebSession $ciCookie -Method Post -FollowRelLink -Body @{login=$user;password=$pass} -SkipCertificateCheck
+        $req = Invoke-WebRequest -Uri "$concourseUrl/sky/login" -Method Get -SessionVariable ciCookie -SkipCertificateCheck
+        Write-Verbose -Message "Received response : $($req | Out-String)"
+        Write-Verbose -Message "Received content : $($req.Content | Out-String)"
+        
         $cookies = $ciCookie.Cookies.GetCookies($concourseUrl)
         Write-Verbose -Message "Recevied cookie from Concourse: $($cookie | Out-String)"
         $cookies["skymarshal_auth0"] ? $(return $cookies) : $(Throw "Unable to authenticate to $concourseUrl with user $user and login type $loginType")
