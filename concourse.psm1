@@ -32,7 +32,6 @@ function Invoke-ConcourseAuth {
         $newUri = ($req.Content |  Select-String -Pattern  "$linkToLogin\?req\=\w*").Matches.Value
         Write-Verbose -Message "Creating new request to $concourseUrl$newUri" 
         $req = Invoke-WebRequest -Uri "$concourseUrl$newUri" -WebSession $ciCookie -Method Post -Body @{login=$user;password=$pass} -SkipCertificateCheck
-        $req = Invoke-WebRequest -Uri "$concourseUrl/sky/login" -Method Get -SessionVariable ciCookie -SkipCertificateCheck
         Write-Verbose -Message "Received response : $($req | Out-String)"
         Write-Verbose -Message "Received content : $($req.Content | Out-String)"
         
