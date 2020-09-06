@@ -13,17 +13,17 @@
 
     // Start PowerShell
     "windows": {
-        "command": "C:/Program Files/PowerShell/7/pwsh.exe",
+        "command": "${env:windir}/System32/WindowsPowerShell/v1.0/powershell.exe",
         //"command": "${env:ProgramFiles}/PowerShell/6.0.0/powershell.exe",
-        "args": [ "-Command" ]
+        "args": [ "-NoProfile", "-ExecutionPolicy", "Bypass" ]
     },
     "linux": {
         "command": "/usr/bin/powershell",
         "args": [ "-NoProfile" ]
     },
     "osx": {
-        "command": "/usr/local/bin/powershell",
-        "args": [ "-NoProfile" ]
+        "command": "/usr/local/microsoft/powershell/7/pwsh",
+        "args": [ "-NoProfile" , "-Command"]
     },
 
     // Associate with test task runner
@@ -33,8 +33,7 @@
             "suppressTaskName": true,
             "isTestCommand": true,
             "args": [
-                "Write-Host 'Invoking Pester...'; $ProgressPreference = 'SilentlyContinue'; Invoke-Pester -Script test -PesterOption @{IncludeVSCodeMarker=$true};",
-                "Invoke-Command { Write-Host 'Completed Test task in task runner.' }"
+                "$ProgressPreference = 'SilentlyContinue'; Invoke-Pester -Path test -Verbose -OutputFile test-results/unit-tests.xml -OutputFormat NUnitXML -CodeCoverage ./concourse.psm1 -CodeCoverageOutputFile test-results/coverage.xml -Show All"
             ],
             "problemMatcher": "$pester"
         }
