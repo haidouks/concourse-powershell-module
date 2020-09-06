@@ -11,9 +11,9 @@ pool:
 
 variables:
 - name: TestResultsFile
-  value: $(Build.SourcesDirectory)/test-results/unit-tests.xml
+  value: $(Build.ArtifactStagingDirectory)/unittests.xml
 - name: CodeCoverageFile
-  value: $(Build.SourcesDirectory)/test-results/code-coverage.xml
+  value: $(Build.ArtifactStagingDirectory)/codecoverage.xml
 
 
 steps:
