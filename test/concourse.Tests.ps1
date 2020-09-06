@@ -81,11 +81,17 @@ Describe "Invoke-ConcourseAuth" {
 }
 
 Describe "Build-ConcourseJob" {
+    BeforeAll {
+        $auth = Invoke-ConcourseAuth -user $userName -pass $pass -concourseUrl $concourseUrl -loginType local
+    }
     Context "If Auth type is local and credentials are valid" {
         It "It should trigger new Concourse build" {
-            $auth = Invoke-ConcourseAuth -user $userName -pass $pass -concourseUrl $concourseUrl -loginType local
             $job = Invoke-ConcourseJob -pipeline $pipeline -ciCookie $auth -team $team -job $job -concourseUrl $concourseUrl
             $job.id | Should -Not -BeNullOrEmpty
+
+        }
+        It "If job doesn't exist, It should throw exception" {
+            {Invoke-ConcourseJob -pipeline $pipeline -ciCookie $auth -team $team -job "__$job" -concourseUrl $concourseUrl} | Should -Throw
 
         }
     }
@@ -103,6 +109,9 @@ Describe "Get-ConcourseJobStatus" {
         }
         It "If build id is not specified, latest build info should return" {
             (Get-ConcourseJobStatus -pipeline $pipeline -job $job -ciCookie $auth -concourseUrl $concourseUrl -team $team).pipeline_name | Should -Be $pipeline
+        }
+        It "If job is not valid, it should throw exception" {
+            {Get-ConcourseJobStatus -pipeline $pipeline -job "__$job" -buildID $buildID -ciCookie $auth -concourseUrl $concourseUrl -team $team} | Should -Throw
         }
     }
 }
@@ -125,6 +134,9 @@ Describe "Get-ConcoursePipeline" {
         }
         It "It should return the all pipelines if only team specified" {
             ((Get-ConcoursePipeline -ciCookie $auth -concourseUrl $concourseUrl  -team $team)).count | Should -BeGreaterOrEqual 1
+        }
+        It "It should throw exception if concourse url is invalid" {
+            {Get-ConcoursePipeline -ciCookie $auth -concourseUrl "__$concourseUrl"  -pipeline $pipeline} | Should -Throw
         }
     }
 }

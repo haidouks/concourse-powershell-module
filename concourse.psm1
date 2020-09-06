@@ -1,5 +1,5 @@
 # Implement your module commands in this script.
-
+$ErrorActionPreference = "Stop"
 function Invoke-ConcourseAuth {
     [OutputType([System.Collections.ArrayList])]
     param (
@@ -416,7 +416,7 @@ function Get-ConcourseJobStatus {
         $jobStatus = Invoke-RestMethod @request
         return $jobStatus
         }
-        catch {
+    catch {
             $exception = $PSItem | Select-Object * | Format-Custom -Depth 1 | Out-String
             Throw $exception
         }
