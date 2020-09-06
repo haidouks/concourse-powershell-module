@@ -53,12 +53,8 @@ steps:
     testResultsFiles: $(TestResultsFile)
 - task: PublishCodeCoverageResults@1
   inputs:
-    #codeCoverageTool: 'JaCoCo' # Options: cobertura, jaCoCo
     summaryFileLocation: $(CodeCoverageFile)
-    #pathToSources: # Optional
-    #reportDirectory: # Optional
-    #additionalCodeCoverageFiles: # Optional
-    #failIfCoverageEmpty: false # Optional
+    pathToSources: $(Build.SourcesDirectory)
 - task: PowerShell@2
   displayName: 'Code Review'
   inputs:
