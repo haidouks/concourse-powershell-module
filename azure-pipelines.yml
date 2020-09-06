@@ -51,6 +51,14 @@ steps:
   inputs:
     testResultsFormat: NUnit
     testResultsFiles: $(TestResultsFile)
+- task: PublishCodeCoverageResults@1
+  inputs:
+    #codeCoverageTool: 'JaCoCo' # Options: cobertura, jaCoCo
+    summaryFileLocation: $(CodeCoverageFile)
+    #pathToSources: # Optional
+    #reportDirectory: # Optional
+    #additionalCodeCoverageFiles: # Optional
+    #failIfCoverageEmpty: false # Optional
 - task: PowerShell@2
   displayName: 'Code Review'
   inputs:
