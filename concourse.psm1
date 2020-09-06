@@ -23,21 +23,11 @@ function Invoke-ConcourseAuth {
     )
     try {
         $linkToLogin = "/sky/issuer/auth/$loginType"
-        $VerbosePreference = "Continue"
-        Write-Verbose -Message "Received response : $($req | Out-String)"
         $req = Invoke-WebRequest -Uri "$concourseUrl/sky/login" -Method Get -SessionVariable ciCookie -SkipCertificateCheck
-        Write-Verbose -Message "Received response : $($req | Out-String)"
-        Write-Verbose -Message "Received content : $($req.Content | Out-String)"
-        Write-Verbose -Message "Filtering url to login for auth type $loginType : $($req.Links.href | Out-String)"
         $newUri = ($req.Content |  Select-String -Pattern  "$linkToLogin\?req\=\w*").Matches.Value
-        Write-Verbose -Message "Creating new request to $concourseUrl$newUri" 
         $req = Invoke-WebRequest -Uri "$concourseUrl$newUri" -WebSession $ciCookie -Method Post -Body @{login=$user;password=$pass} -SkipCertificateCheck
-        Write-Verbose -Message "Received response : $($req | Out-String)"
-        Write-Verbose -Message "Received content : $($req.Content | Out-String)"
-        
         $cookies = $ciCookie.Cookies.GetCookies($concourseUrl)
-        Write-Verbose -Message "Recevied cookie from Concourse: $($cookie | Out-String)"
-        $cookies["skymarshal_auth0"] ? $(return $cookies) : $(Throw "Unable to authenticate to $concourseUrl with user $user and login type $loginType")
+        $cookies["skymarshal_auth"] ? $(return $cookies) : $(Throw "Unable to authenticate to $concourseUrl with user $user and login type $loginType")
     }
     catch {
         $exception = $PSItem | Select-Object * | Format-Custom -Depth 1 | Out-String
@@ -86,7 +76,7 @@ function Invoke-ConcourseAuth {
         Domain     : myConcourseUrl.com
         Expired    : False
         Expires    : 03.09.2020 10:53:19
-        Name       : skymarshal_auth0
+        Name       : skymarshal_auth
         Path       : /
         Port       :
         Secure     : False
@@ -123,16 +113,12 @@ function Invoke-ConcourseAuth {
         Domain     : myConcourseUrl.com
         Expired    : False
         Expires    : 03.09.2020 10:53:19
-        Name       : skymarshal_auth0
+        Name       : skymarshal_auth
         Path       : /
         Port       :
         Secure     : False
         TimeStamp  : 02.09.2020 10:53:20
-        Value      : "bearer 1239182319273198hasdklasd0v1lkj1.eyJpc3MiOiJodHRwOi8vY2kudG9vbC56ZnUuemIvc2t5L2lzc3VlciIsInN1YiI6IkNlkjasd09lk1234092lkndlsfs0d9fsdfklsdlfn2039rlkqa-aisadnVmhaRzFwYmhJRmJHOWpZV3c
-                     iLCJhdWQiOiJjb25jb3Vyc2Utd2ViIiwiZXhwIjoxNTk5MTE5NjAwLCJpYXQiOjE1OTkwMzMyMDAsImF0X2hhc2giOiJvMkFSZHA4enE1c3JWNnEtUzZmeWZnIiwiZW1haWwiOiJhZG1pbiIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmZWRlcmF0Z
-                     WRfY2xhaW1zIjp7ImNvbm5lY3Rvcl9pZCI6ImxvY2FsIiwidXNlcl9pZCI6ImFkbWluIiwidXNlcl9uYW1lIjoiYWRtaW4ifX0.Bn9A_btzIWUw5IdYdEcSku5uEUfoTSBgyogYnjgAly99qEDVqK_3IWtMOThfHJSzMmcy17RYpR8ebW3cuk3OLgQ
-                     KHfLLWzoZaLGSUWjG8bszAIbIDOBT7qMGbesEx01yKCOsFXUuhaqudt9f3iKrjjz3rCE9TOkhSKmCUH5NKgzzgW9iEPhrwWlMNtdmpWiF2nPp1G9DDzxfIOMMy6Pjf95-NzG5LSUQMY0inLAA_E2xAWozmRJRl78pRk7JvfU5WcEu9hboWwMbeXqUk
-                     bgQq_puI6C_baQosWwzHtham32yz145h0r83LKLDkFXVhudfToAiwk4JrHUnxv-kmQ6rHaw"
+        Value      : "bearer 1239182319273198hasdklasd0v1lk"sky
         Version    : 0
 
         Comment    :
