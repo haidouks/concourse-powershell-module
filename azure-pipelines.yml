@@ -9,6 +9,13 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+- name: TestResultsFile
+  value: $(Build.ArtifactStagingDirectory)\unit-tests.xml
+- name: CodeCoverageFile
+  value: $(Build.ArtifactStagingDirectory)\code-coverage.xml
+
+
 steps:
 - task: DockerCompose@0
   displayName: 'Start Concourse'
@@ -26,7 +33,7 @@ steps:
       Import-Module Pester -Force
       $ProgressPreference = "SilentlyContinue"
       $verbosePreference = "Continue"
-      Invoke-Pester -Path test -Verbose -OutputFile test-results/unit-tests.xml -OutputFormat NUnitXML -CodeCoverage ./concourse.psm1 -CodeCoverageOutputFile test-results/coverage.xml -Show All
+      Invoke-Pester -Path test -Verbose -OutputFile $(TestResultsFile) -OutputFormat NUnitXML -CodeCoverage ./concourse.psm1 -CodeCoverageOutputFile $(CodeCoverageFile) -Show All
     failOnStderr: true
     pwsh: true
 - task: DockerCompose@0
@@ -37,6 +44,13 @@ steps:
     dockerComposeFile: 'docker-compose.yml'
     action: 'Run a Docker Compose command'
     dockerComposeCommand: 'down'
+- task: PublishTestResults@2
+  name: TestResults
+  displayName: Publish Unit Test Results
+  condition: always()
+  inputs:
+    testResultsFormat: NUnit
+    testResultsFiles: $(TestResultsFile)
 - task: PowerShell@2
   displayName: 'Code Review'
   inputs:
