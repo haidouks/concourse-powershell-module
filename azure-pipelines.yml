@@ -11,9 +11,9 @@ pool:
 
 variables:
 - name: TestResultsFile
-  value: $(Build.ArtifactStagingDirectory)\unit-tests.xml
+  value: $(Build.SourcesDirectory)/test-results/unit-tests.xml
 - name: CodeCoverageFile
-  value: $(Build.ArtifactStagingDirectory)\code-coverage.xml
+  value: $(Build.SourcesDirectory)/test-results/code-coverage.xml
 
 
 steps:
@@ -33,7 +33,7 @@ steps:
       Import-Module Pester -Force
       $ProgressPreference = "SilentlyContinue"
       $verbosePreference = "Continue"
-      Invoke-Pester -Path test -Verbose -OutputFile $(TestResultsFile) -OutputFormat NUnitXML -CodeCoverage ./concourse.psm1 -CodeCoverageOutputFile $(CodeCoverageFile) -Show All
+      Invoke-Pester -Path test -Verbose -OutputFile $(TestResultsFile) -OutputFormat NUnitXML -CodeCoverage $(Build.SourcesDirectory)/concourse.psm1 -CodeCoverageOutputFile $(CodeCoverageFile) -Show All
     failOnStderr: true
     pwsh: true
 - task: DockerCompose@0
