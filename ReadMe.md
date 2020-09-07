@@ -1,12 +1,21 @@
 # Concourse module for Powershell
 
-## How to install?
+## Installation
 
 ````
-Install-Module -Name concourse
+Install-Module -Name Concourse
+````
+
+## Usage
+
+Easy way to discover all commands is using ``Get-Command``. This command will list all available functions within Concourse module.
+````
+Get-Command -Module Concourse
 ````
 
 
+
+## Status
 
 | Build  |  Publish |
 |---|---|
