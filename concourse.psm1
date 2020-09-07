@@ -16,7 +16,6 @@ function Invoke-ConcourseAuth {
         [String]
         $concourseUrl,
         # Login Type
-        [ValidateSet("local","ldap")]
         [ValidateNotNullOrEmpty()]
         [String]
         $loginType
