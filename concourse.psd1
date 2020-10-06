@@ -12,7 +12,7 @@
 RootModule = 'concourse.psm1'
 
 # Version number of this module.
-ModuleVersion = '3.1.4'
+ModuleVersion = '3.1.5'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -107,7 +107,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'Remove fly depended functions'
+        ReleaseNotes = 'Coverage badge added'
 
     } # End of PSData hashtable
 
