@@ -12,7 +12,7 @@
 RootModule = 'concourse.psm1'
 
 # Version number of this module.
-ModuleVersion = '3.1.5'
+ModuleVersion = '3.1.6'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -104,10 +104,10 @@ PrivateData = @{
         ProjectUri = 'https://github.com/haidouks/concourse-powershell-module'
 
         # A URL to an icon representing this module.
-        # IconUri = ''
+        IconUri = 'https://upload-icon.s3.us-east-2.amazonaws.com/uploads/icons/png/1008653371536211767-512.png'
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'Coverage badge added'
+        ReleaseNotes = 'Icon uri added for PSGallery'
 
     } # End of PSData hashtable
 
