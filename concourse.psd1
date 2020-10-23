@@ -12,7 +12,7 @@
 RootModule = 'concourse.psm1'
 
 # Version number of this module.
-ModuleVersion = '3.1.6'
+ModuleVersion = '3.1.7'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
