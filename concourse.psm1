@@ -482,6 +482,11 @@ function Get-ConcourseJobStatus {
 
 }
 
+function Get-Hello {
+    param (
+    )
+    return "Get hello"
+}
 
 
 # Export only the functions using PowerShell standard verb-noun naming.

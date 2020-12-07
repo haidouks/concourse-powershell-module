@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="16" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2020-12-07" time="11:31:55">
+  <environment user="cansinaldanmaz" nunit-version="2.5.8.0" clr-version="Unknown" machine-name="Cansn-MacBook-Pro.local" os-version="19.6.0" user-domain="" cwd="/Users/cansinaldanmaz/Downloads/workspace/github.com/haidouks/concourse-powershell-module" platform="Darwin" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Success" success="True" time="5.69" asserts="0" description="Pester">
+    <results>
+      <test-suite type="TestFixture" name="/Users/cansinaldanmaz/Downloads/workspace/github.com/haidouks/concourse-powershell-module/test/concourse.Tests.ps1" executed="True" result="Success" success="True" time="5.69" asserts="0" description="/Users/cansinaldanmaz/Downloads/workspace/github.com/haidouks/concourse-powershell-module/test/concourse.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Set First Pipeline" executed="True" result="Success" success="True" time="3.3351" asserts="0" description="Set First Pipeline">
+            <results>
+              <test-suite type="TestFixture" name="Set First Pipeline.If cli path is valid" executed="True" result="Success" success="True" time="2.3085" asserts="0" description="Set First Pipeline.If cli path is valid">
+                <results>
+                  <test-case description="Should download fly cli" name="Set First Pipeline.If cli path is valid.Should download fly cli" time="2.2522" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Set First Pipeline.Login to Concourse" executed="True" result="Success" success="True" time="3.3016" asserts="0" description="Set First Pipeline.Login to Concourse">
+                <results>
+                  <test-case description="If credentials are valid, fly should login to concourse" name="Set First Pipeline.Login to Concourse.If credentials are valid, fly should login to concourse" time="0.937" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should delete fly" name="Set First Pipeline.Login to Concourse.Should delete fly" time="0.0294" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Module Manifest Tests" executed="True" result="Success" success="True" time="3.4131" asserts="0" description="Module Manifest Tests">
+            <results>
+              <test-case description="Passes Test-ModuleManifest" name="Module Manifest Tests.Passes Test-ModuleManifest" time="0.0565" asserts="0" success="True" result="Success" executed="True" />
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Invoke-ConcourseAuth" executed="True" result="Success" success="True" time="3.9822" asserts="0" description="Invoke-ConcourseAuth">
+            <results>
+              <test-suite type="TestFixture" name="Invoke-ConcourseAuth.If Auth type is local and credentials are valid" executed="True" result="Success" success="True" time="0.2901" asserts="0" description="Invoke-ConcourseAuth.If Auth type is local and credentials are valid">
+                <results>
+                  <test-case description="It should return skymarshal_auth" name="Invoke-ConcourseAuth.If Auth type is local and credentials are valid.It should return skymarshal_auth" time="0.2757" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="Invoke-ConcourseAuth.If Auth type is local and credentials are invalid" executed="True" result="Success" success="True" time="0.5502" asserts="0" description="Invoke-ConcourseAuth.If Auth type is local and credentials are invalid">
+                <results>
+                  <test-case description="It should return skymarshal_auth" name="Invoke-ConcourseAuth.If Auth type is local and credentials are invalid.It should return skymarshal_auth" time="0.2374" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Build-ConcourseJob" executed="True" result="Success" success="True" time="4.3993" asserts="0" description="Build-ConcourseJob">
+            <results>
+              <test-suite type="TestFixture" name="Build-ConcourseJob.If Auth type is local and credentials are valid" executed="True" result="Success" success="True" time="0.1852" asserts="0" description="Build-ConcourseJob.If Auth type is local and credentials are valid">
+                <results>
+                  <test-case description="It should trigger new Concourse build" name="Build-ConcourseJob.If Auth type is local and credentials are valid.It should trigger new Concourse build" time="0.105" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="If job doesn't exist, It should throw exception" name="Build-ConcourseJob.If Auth type is local and credentials are valid.If job doesn't exist, It should throw exception" time="0.0683" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Get-ConcourseJobStatus" executed="True" result="Success" success="True" time="4.7712" asserts="0" description="Get-ConcourseJobStatus">
+            <results>
+              <test-suite type="TestFixture" name="Get-ConcourseJobStatus.Get job object from concourse" executed="True" result="Success" success="True" time="0.1273" asserts="0" description="Get-ConcourseJobStatus.Get job object from concourse">
+                <results>
+                  <test-case description="If build id is valid" name="Get-ConcourseJobStatus.Get job object from concourse.If build id is valid" time="0.0444" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="If build id is not specified, latest build info should return" name="Get-ConcourseJobStatus.Get job object from concourse.If build id is not specified, latest build info should return" time="0.0412" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="If job is not valid, it should throw exception" name="Get-ConcourseJobStatus.Get job object from concourse.If job is not valid, it should throw exception" time="0.0296" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Get-ConcoursePipeline" executed="True" result="Success" success="True" time="5.1584" asserts="0" description="Get-ConcoursePipeline">
+            <results>
+              <test-suite type="TestFixture" name="Get-ConcoursePipeline.If parameters are valid" executed="True" result="Success" success="True" time="0.1652" asserts="0" description="Get-ConcoursePipeline.If parameters are valid">
+                <results>
+                  <test-case description="It should return all pipeline if no pipeline name specified" name="Get-ConcoursePipeline.If parameters are valid.It should return all pipeline if no pipeline name specified" time="0.0233" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="It should return the pipeline if pipeline name specified" name="Get-ConcoursePipeline.If parameters are valid.It should return the pipeline if pipeline name specified" time="0.0234" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="It should return the all information about pipeline if pipeline name specified" name="Get-ConcoursePipeline.If parameters are valid.It should return the all information about pipeline if pipeline name specified" time="0.0332" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="It should return the all pipelines if only team specified" name="Get-ConcoursePipeline.If parameters are valid.It should return the all pipelines if only team specified" time="0.0231" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="It should throw exception if concourse url is invalid" name="Get-ConcoursePipeline.If parameters are valid.It should throw exception if concourse url is invalid" time="0.0455" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
